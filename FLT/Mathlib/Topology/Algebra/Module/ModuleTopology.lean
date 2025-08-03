@@ -63,7 +63,7 @@ theorem Module.continuous_bilinear_of_finite_free [IsTopologicalSemiring R] [Mod
     Continuous (fun ab ↦ bil ab.1 ab.2 : (A × B → C)) := by
   let ι := Module.Free.ChooseBasisIndex R A
   let hι : Fintype ι := Module.Free.ChooseBasisIndex.fintype R A
-  let b : Basis ι R A := Module.Free.chooseBasis R A
+  let b : Module.Basis ι R A := Module.Free.chooseBasis R A
   let elinear : A ≃ₗ[R] (ι → R) := b.equivFun
   let bil' : (ι → R) →ₗ[R] B →ₗ[R] C := bil.comp elinear.symm.toLinearMap
   have := Module.continuous_bilinear_of_pi_finite ι bil'
@@ -389,11 +389,11 @@ def continuousAlgEquivOfIsScalarTower {A B : Type*} (R S₁ : Type*) {S₂ : Typ
   toAlgEquiv := e
   continuous_toFun := by
     -- switch the equivalence scalars of `e` from `S₂` over to `S₁`
-    show Continuous (e.changeScalars R S₁ he).toLinearEquiv
+    change Continuous (e.changeScalars R S₁ he).toLinearEquiv
     -- then this is an `S₁`-linear map on the `S₁`-module topology, so is continuous
     exact IsModuleTopology.continuous_of_linearMap _
   continuous_invFun := by
-    show Continuous (e.changeScalars R S₁ he).toLinearEquiv.symm
+    change Continuous (e.changeScalars R S₁ he).toLinearEquiv.symm
     exact IsModuleTopology.continuous_of_linearMap _
 
 @[simp]
@@ -403,7 +403,7 @@ theorem continuousAlgEquivOsIfScalarTower_apply {A B : Type*} (R S₁ : Type*) {
     [IsTopologicalSemiring B] [IsTopologicalSemiring A] [TopologicalSpace S₁] [Algebra R A]
     [Algebra R B] [IsModuleTopology S₁ A] [IsModuleTopology S₁ B] [Algebra R S₁]
     [IsScalarTower R S₁ A] [Algebra R S₂] [IsScalarTower R S₂ A] [IsScalarTower R S₂ B]
-    (e : A ≃ₐ[S₂] B) (he: ∀ s, e (algebraMap S₁ A s) = algebraMap S₁ B s) (a : A) :
+    (e : A ≃ₐ[S₂] B) (he : ∀ s, e (algebraMap S₁ A s) = algebraMap S₁ B s) (a : A) :
     continuousAlgEquivOfIsScalarTower R S₁ e he a = e a :=
   rfl
 
@@ -424,13 +424,13 @@ def continuousAlgEquivOfAlgEquiv {A B R : Type*} [TopologicalSpace A]
 
 /-- A free module with the module topology over a `T2Space` ring is a `T2Space`.
 -/
-theorem t2Space {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] [Module.Free R M]
+theorem t2Space (R : Type*) {M : Type*} [Semiring R] [AddCommGroup M] [Module R M] [Module.Free R M]
     [TopologicalSpace R] [TopologicalSpace M] [T2Space R]
     [ContinuousAdd R] [ContinuousMul R] [IsModuleTopology R M]
     : T2Space M := by
   have := IsModuleTopology.topologicalAddGroup R M
   rw [IsTopologicalAddGroup.t2Space_iff_zero_closed]
-  let f := Module.Free.repr R M |>.toLinearMap
+  let f := (Module.Free.chooseBasis R M).repr |>.toLinearMap
   let g : (Module.Free.ChooseBasisIndex R M →₀ R) →ₗ[R] (Module.Free.ChooseBasisIndex R M → R) := {
     __ := Finsupp.coeFnAddHom
     map_smul' _ _ := rfl
@@ -441,7 +441,7 @@ theorem t2Space {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] [Module
     exact isClosed_singleton
   ext x
   simp [map_eq_zero_iff g DFunLike.coe_injective,
-    map_eq_zero_iff f (Module.Free.repr R M).injective]
+    map_eq_zero_iff f (Module.Free.chooseBasis R M).repr.injective]
 
 /-- A vector space with the module topology over a `T2Space` ring is a `T2Space`.
 -/
@@ -480,7 +480,7 @@ instance _root_.Prod.instFinite_leftAlgebra : Module.Finite (A × B) A :=
 instance _root_.Prod.instFinite_rightAlgebra : Module.Finite (A × B) B :=
   Module.Finite.of_surjective (LinearMap.snd (A × B) A B) LinearMap.snd_surjective
 
-variable  [τA : TopologicalSpace A] [τB : TopologicalSpace B] [TopologicalSpace M]
+variable [τA : TopologicalSpace A] [τB : TopologicalSpace B] [TopologicalSpace M]
   [TopologicalSpace N] [IsModuleTopology A M] [IsModuleTopology B N] [IsTopologicalRing A]
   [IsTopologicalRing B]
 

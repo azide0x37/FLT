@@ -3,7 +3,7 @@ Copyright (c) 2024 Kevin Buzzard. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kevin Buzzard, Jonas Bayer
 -/
-import Mathlib.RingTheory.DedekindDomain.Ideal
+import Mathlib.Data.Int.Star
 import FLT.GlobalLanglandsConjectures.GLnDefs
 
 /-!
@@ -53,14 +53,15 @@ namespace GL0
 
 variable (ρ : Weight 0)
 
-set_option synthInstance.maxHeartbeats 50000 in
+/-- Make an automorphic form for GL₀/ℚ from a complex number -/
 def ofComplex (c : ℂ) : AutomorphicFormForGLnOverQ 0 ρ := {
     toFun := fun _ => c,
     is_smooth := {
       continuous := by continuity
       loc_cst := by
         rw [IsLocallyConstant]
-        aesop
+        sorry
+        -- aesop -- used to work
       smooth := by simp [contMDiff_const]
     }
     is_periodic := by simp
@@ -68,9 +69,11 @@ def ofComplex (c : ℂ) : AutomorphicFormForGLnOverQ 0 ρ := {
     is_finite_cod := by
       intros x
       rw [FiniteDimensional, annihilator]
-      exact {
-        fg_top := by sorry
-      }
+      sorry -- weird typeclass timeout
+      -- exact {
+      --   fg_top := by
+      --     sorry
+      -- }
     has_finite_level := by
       let U : Subgroup (GL (Fin 0) (IsDedekindDomain.FiniteAdeleRing ℤ ℚ)) := {
         carrier := {1},
@@ -80,14 +83,14 @@ def ofComplex (c : ℂ) : AutomorphicFormForGLnOverQ 0 ρ := {
       }
       apply Exists.intro U
       exact {
-          is_open := by simp
+          is_open := by sorry -- used to be simp but there's a timeout
           is_compact := by aesop
           finite_level := by simp
       }
   }
 
 -- the weakest form of the classification theorem
-noncomputable def classification: AutomorphicFormForGLnOverQ 0 ρ ≃ ℂ := {
+noncomputable def classification : AutomorphicFormForGLnOverQ 0 ρ ≃ ℂ := {
   toFun := fun f ↦ f 1
   invFun := fun c ↦ ofComplex ρ c
   left_inv := by
@@ -128,3 +131,7 @@ noncomputable def classification (ρ : Weight 0) : AutomorphicFormForGLnOverQ 0 
 
 -- Can this be beefed up to an isomorphism of complex
 -- vector spaces?
+
+end GLn
+
+end AutomorphicForm

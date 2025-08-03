@@ -40,7 +40,7 @@ private lemma log_approx {x : ℝ} (hx : 0 < x) : (1 + x)⁻¹ ≤ log (1 + x⁻
 private lemma rootDiscrBound_strictMono_aux3 {x : ℝ} (hx : 1 ≤ x) :
     -0.5 ≤ log x / 2 - x / (x + 1) := by
   suffices h : StrictMonoOn (fun x ↦ log x / 2 - x / (x + 1)) (Set.Ioi 0) by
-    convert h.monotoneOn (by simp) (by simp; linarith) hx using 1
+    convert h.monotoneOn (by simp) (by simp only [Set.mem_Ioi]; linarith) hx using 1
     norm_num
   apply strictMonoOn_of_hasDerivWithinAt_pos (convex_Ioi _)
     (f' := fun x ↦ (x ^ 2 + 1) / (2 * x * (x + 1) ^ 2))
@@ -122,6 +122,7 @@ private lemma rootDiscrBound_four_lt : rootDiscrBound 4 < 2.75 := by
 private lemma rootDiscrBound_five_gt : 2.75 < rootDiscrBound 5 := by
   have h₁ : 2.75 < rootDiscrBound 5 := by calc _ * _
     _ > π / 4 * (5 ^ 2 / 7) := by
+        norm_cast
         gcongr
         rw [div_eq_mul_inv, rpow_mul, rpow_inv_lt_iff_of_pos]
         all_goals norm_num
@@ -132,6 +133,7 @@ private lemma rootDiscrBound_thirteen_lt :
     rootDiscrBound 13 < 2 ^ (2 / 3 : ℝ) * 3 ^ (7 / 8 : ℝ) := by
   have h₁ : rootDiscrBound 13 < 4.15 := by calc _ * _
     _ < π / 4 * (13 ^ 2 / 32) := by
+        norm_cast
         gcongr
         rw [div_eq_mul_inv, rpow_mul, lt_rpow_inv_iff_of_pos]
         all_goals norm_num
@@ -146,6 +148,7 @@ private lemma rootDiscrBound_fourteen_gt :
     2 ^ (2 / 3 : ℝ) * 3 ^ (7 / 8 : ℝ) < rootDiscrBound 14 := by
   have h₁ : 4.16 < rootDiscrBound 14 := by calc _ * _
     _ > π / 4 * (14 ^ 2 / 37) := by
+        norm_cast
         gcongr
         rw [div_eq_mul_inv, rpow_mul, rpow_inv_lt_iff_of_pos]
         all_goals norm_num

@@ -23,7 +23,7 @@ could talk to David first. Note that he has already made substantial progress.
 
 universe u
 
-variable {k : Type u} [Field k] (E : WeierstrassCurve k) [E.IsElliptic]
+variable {k : Type u} [Field k] (E : WeierstrassCurve k) [E.IsElliptic] [DecidableEq k]
 
 open WeierstrassCurve WeierstrassCurve.Affine
 
@@ -45,10 +45,9 @@ theorem WeierstrassCurve.n_torsion_finite {n : ℕ} (hn : 0 < n) : Finite (E.n_t
 theorem WeierstrassCurve.n_torsion_card [IsSepClosed k] {n : ℕ} (hn : (n : k) ≠ 0) :
     Nat.card (E.n_torsion n) = n^2 := sorry
 
-set_option autoImplicit true in -- TODO: fix statement
 theorem group_theory_lemma {A : Type*} [AddCommGroup A] {n : ℕ} (hn : 0 < n) (r : ℕ)
     (h : ∀ d : ℕ, d ∣ n → Nat.card (Submodule.torsionBy ℤ A d) = d ^ r) :
-    ∃ φ :(Submodule.torsionBy ℤ A n) ≃+ Fin d → (ZMod n), True := sorry
+    ∃ φ : (Submodule.torsionBy ℤ A n) ≃+ (Fin r → (ZMod n)), True := sorry
 
 -- I only need this if n is prime but there's no harm thinking about it in general I guess.
 -- It follows from the previous theorem using pure group theory (possibly including the
@@ -60,18 +59,20 @@ theorem WeierstrassCurve.n_torsion_dimension [IsSepClosed k] {n : ℕ} (hn : (n 
 /-- The map on points for an elliptic curve over `k` induced by a morphism of `k`-algebras
 is a group homomorphism. -/
 def WeierstrassCurve.Points.map {K L : Type u} [Field K] [Field L] [Algebra k K] [Algebra k L]
+    [DecidableEq K] [DecidableEq L]
     (f : K →ₐ[k] L) : E ⟮K⟯ →+ E ⟮L⟯ := sorry
 
-lemma WeierstrassCurve.Points.map_id (K : Type u) [Field K] [Algebra k K] :
+lemma WeierstrassCurve.Points.map_id (K : Type u) [Field K] [DecidableEq K] [Algebra k K] :
     WeierstrassCurve.Points.map E (AlgHom.id k K) = AddMonoidHom.id _ := sorry
 
 lemma WeierstrassCurve.Points.map_comp (K L M : Type u) [Field K] [Field L] [Field M]
-    [Algebra k K] [Algebra k L] [Algebra k M] (f : K →ₐ[k] L) (g : L →ₐ[k] M) :
+    [DecidableEq K] [DecidableEq L] [DecidableEq M] [Algebra k K] [Algebra k L] [Algebra k M]
+    (f : K →ₐ[k] L) (g : L →ₐ[k] M) :
     (WeierstrassCurve.Points.map E g).comp (WeierstrassCurve.Points.map E f) =
     WeierstrassCurve.Points.map E (g.comp f) := sorry
 
 /-- The Galois action on the points of an elliptic curve. -/
-def WeierstrassCurve.galoisRepresentation (K : Type u) [Field K] [Algebra k K] :
+def WeierstrassCurve.galoisRepresentation (K : Type u) [Field K] [DecidableEq K] [Algebra k K] :
     DistribMulAction (K ≃ₐ[k] K) (E ⟮K⟯) := sorry
 
 /-- The Galois action on the n-torsion points of an elliptic curve. -/
