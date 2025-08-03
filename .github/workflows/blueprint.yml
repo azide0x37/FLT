@@ -81,7 +81,7 @@ jobs:
         uses: leanprover-community/gh-problem-matcher-wrap@20007cb926a46aa324653a387363b52f07709845 # 2025-04-23
         with:
           linters: gcc
-          run: bash -lc "LEAN_ABORT_ON_PANIC=1 ~/.elan/bin/lake exe shake --gh-style"
+          run: bash -lc "LEAN_ABORT_ON_PANIC=1 ~/.elan/bin/lake exe shake --fix --gh-style"
 
       - name: Cache Mathlib docs
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
